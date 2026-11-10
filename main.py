@@ -2,20 +2,16 @@ import os
 
 from dotenv import load_dotenv
 from openai import OpenAI
-from openai.types.chat import ChatCompletionUserMessageParam
+
+from core import generate_recipe
 
 if __name__ == "__main__":
     load_dotenv()
-
     client = OpenAI(api_key=os.getenv("AI_API_KEY"), base_url=os.getenv("AI_BASE_URL"))
 
-    user_message = ChatCompletionUserMessageParam(
-        role="user", content="Каковы основные идеи философии Шопенгауэра?"
+    recipe = generate_recipe(
+        ingredients="Творог 9%, яблоки, изюм, вода, шоколад, "
+        "кабачковая икра, хлебцы, кукуруза, греча, макароны",
+        client=client,
     )
-
-    response = client.chat.completions.create(
-        model="google/gemma-3-4b-it",
-        messages=[user_message],
-    )
-
-    print(response.choices[0].message.content)
+    print(recipe)
