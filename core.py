@@ -1,3 +1,4 @@
+from functools import cache
 from pathlib import Path
 
 import openai
@@ -7,19 +8,19 @@ from openai.types.chat import (
     ChatCompletionUserMessageParam,
 )
 
+from constants import *
 from utility import load_file, preprocessing
 
-TOP_PROBABILITY = 0.7
-TEMPERATURE = 0.8
+parent_path = Path(__file__).resolve().parent
 
 
+@cache
 def generate_recipe(
     ingredients: str,
     client: OpenAI,
 ) -> str:
-    parent_path = Path(__file__).resolve().parent
-    system_prompt = load_file(parent_path / "system_prompt.xml")
-    user_prompt = load_file(parent_path / "user_prompt.xml").format(
+    system_prompt = load_file(parent_path / SYSTEM_PROMPT_PATH)
+    user_prompt = load_file(parent_path / USER_PROMPT_PATH).format(
         ingredients=ingredients,
     )
 
@@ -35,7 +36,7 @@ def generate_recipe(
 
     try:
         response = client.chat.completions.create(
-            model="google/gemma-3-4b-it",
+            model=MODEL,
             messages=[system_message, user_message],
             temperature=TEMPERATURE,
             top_p=TOP_PROBABILITY,
