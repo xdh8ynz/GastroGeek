@@ -1,6 +1,13 @@
-from fastapi import APIRouter, Request
+import json
+
+from fastapi import APIRouter, Request, status
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.templating import Jinja2Templates
+
+import ai.recipe_generator
+from ai.ai_client import client
+from core.logger import logger
+from core.utility import preprocessing
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter()
@@ -12,32 +19,21 @@ async def show_root_page(request: Request):
 
 
 # TODO: сделать асинхронной
+# TODO: добавить генерацию ккал
+# TODO: добавить валидацию JSON
+# TODO: добавить индикатор загрузки
+# TODO: добавить pydantic
 @router.get("/generate", response_class=JSONResponse)
 def generate_recipe(ingredients: str):
-    print(ingredients)
-    return {
-        "title": "Курица с рисом и овощами",
-        "description": "Простое и вкусное блюдо, которое идеально подойдет для семейного ужина. Нежная курица в сочетании с рассыпчатым рисом и хрустящими овощами.",
-        "time": "60 минут",
-        "difficulty": "Легкий рецепт",
-        "ingredients": [
-            "Куриное филе - 500 г",
-            "Рис - 300 г",
-            "Лук репчатый - 2 шт",
-            "Морковь - 2 шт",
-            "Чеснок - 3 зубчика",
-            "Специи по вкусу",
-            "Растительное масло - 2 ст. л.",
-            "Соль и перец - по вкусу",
-        ],
-        "steps": [
-            "Нарежьте курицу кубиками среднего размера",
-            "Отварите рис до готовности согласно инструкции на упаковке",
-            "Обжарьте курицу на сковороде до золотистой корочки",
-            "Добавьте нарезанный лук и морковь, тушите 10 минут",
-            "Добавьте измельченный чеснок и специи",
-            "Смешайте готовый рис с курицей и овощами",
-            "Подавайте горячим, украсив свежей зеленью",
-        ],
-        "tip": "Для более насыщенного вкуса можно добавить немного соевого соуса или томатной пасты.",
-    }
+    recipe = ai.recipe_generator.generate_recipe(ingredients, client)
+
+    try:
+        recipe_json = json.loads(preprocessing(recipe))
+    except json.JSONDecodeError as exception:
+        logger.warn("Некорректный JSON: ", exception.msg)
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"error": exception.msg},
+        )
+
+    return JSONResponse(content=recipe_json)
