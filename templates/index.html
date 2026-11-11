@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>GastroGeek</title>
+        <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2e7d32;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: 2px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: #66bb6a;
+            margin-top: 10px;
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .input-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(46, 125, 50, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: "\1F951";
+            font-size: 1.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #c8e6c9;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: none;
+            transition: all 0.3s ease;
+            background: #f1f8f1;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #66bb6a;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.1);
+        }
+
+        textarea::placeholder {
+            color: #a5d6a7;
+        }
+
+        .generate-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        }
+
+        .generate-btn:hover {
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+            background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+        }
+
+        .generate-btn:active {
+            transform: translateY(1px);
+        }
+
+        .recipe-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(46, 125, 50, 0.1);
+            min-height: 400px;
+        }
+
+        .recipe-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 350px;
+            color: #a5d6a7;
+            text-align: center;
+        }
+
+        .recipe-placeholder-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .recipe-placeholder-text {
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        .recipe-content {
+            display: none;
+        }
+
+        .recipe-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .recipe-title {
+            font-size: 2rem;
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .recipe-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+            font-style: italic;
+        }
+
+        .recipe-meta {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            padding: 15px;
+            background: #f1f8f1;
+            border-radius: 12px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2e7d32;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .recipe-section-title {
+            font-size: 1.4rem;
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-weight: 600;
+            margin-top: 25px;
+        }
+
+        .ingredients-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+        }
+
+        .ingredients-list li {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: #f1f8f1;
+            border-radius: 8px;
+            border-left: 3px solid #66bb6a;
+            color: #555;
+            transition: background 0.2s ease;
+        }
+
+        .ingredients-list li:hover {
+            background: #e8f5e9;
+        }
+
+        .steps-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .steps-list li {
+            padding: 15px 15px 15px 50px;
+            margin-bottom: 12px;
+            background: #f1f8f1;
+            border-radius: 8px;
+            position: relative;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .steps-list li::before {
+            content: attr(data-step);
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            background: #43a047;
+            color: white;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .recipe-tip {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f1f8f1;
+            border-left: 4px solid #66bb6a;
+            border-radius: 8px;
+            color: #555;
+            font-style: italic;
+        }
+
+        .recipe-tip strong {
+            color: #2e7d32;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header class="header">
+                <h1 class="logo">GastroGeek</h1>
+                <p class="tagline">Генератор умных рецептов из ваших ингредиентов</p>
+            </header>
+            <main class="main-content">
+                <section class="input-section">
+                    <h2 class="section-title">Ваши ингредиенты</h2>
+                    <textarea id="ingredientsInput" placeholder="Введите ингредиенты через запятую или каждый с новой строки...&#10;&#10;Например:&#10;курица, рис, лук, морковь, чеснок"></textarea>
+                    <button class="generate-btn" onclick="generateRecipe()">
+                        &#128171; Сгенерировать рецепт
+                    </button>
+                </section>
+                <section class="recipe-section">
+                    <div class="recipe-placeholder" id="placeholder">
+                        <div class="recipe-placeholder-icon">&#127860;</div>
+                        <div class="recipe-placeholder-text">
+                            Введите ингредиенты и нажмите кнопку,
+                            <br>
+                            чтобы получить идеальный рецепт.
+                        </div>
+                    </div>
+                    <div class="recipe-content" id="recipeContent">
+                        <h2 class="recipe-title" id="recipeTitle"></h2>
+                        <p class="recipe-description" id="recipeDescription"></p>
+                        <div class="recipe-meta">
+                            <div class="meta-item">
+                                <span>&#9203;</span>
+                                <span id="cookTime"></span>
+                            </div>
+                            <div class="meta-item">
+                                <span>&#128202;</span>
+                                <span id="difficulty"></span>
+                            </div>
+                        </div>
+                        <h3 class="recipe-section-title">Ингредиенты:</h3>
+                        <ul class="ingredients-list" id="ingredientsList"></ul>
+                        <h3 class="recipe-section-title">Приготовление:</h3>
+                        <ol class="steps-list" id="stepsList"></ol>
+                        <p class="recipe-tip" id="recipeTip"></p>
+                    </div>
+                </section>
+            </main>
+        </div>
+        <script>
+            async function generateRecipe() {
+                const placeholder = document.getElementById("placeholder");
+                const recipeContent = document.getElementById("recipeContent");
+
+                placeholder.style.display = "none";
+                recipeContent.classList.add("active");
+
+                const input = document.getElementById("ingredientsInput").value.trim();
+
+                if (!input) {
+                    alert("Пожалуйста, введите хотя бы один ингредиент!");
+                    return;
+                }
+
+                const url = new URL("/generate", window.location.origin);
+                const params = {
+                    ingredients: input,
+                };
+
+                url.search = new URLSearchParams(params).toString();
+                const response = await fetch(url);
+                parseResponse(response);
+            }
+
+            async function parseResponse(response) {
+                const jsonObject = await response.json();
+
+                const title = jsonObject.title;
+                const description = jsonObject.description;
+                const time = jsonObject.time;
+                const difficulty = jsonObject.difficulty;
+                const ingredients = jsonObject.ingredients;
+                const steps = jsonObject.steps;
+                const tip = jsonObject.tip;
+
+                document.getElementById("recipeTitle").textContent = title;
+                document.getElementById("recipeDescription").textContent = description;
+                document.getElementById("cookTime").textContent = time;
+                document.getElementById("difficulty").textContent = difficulty;
+
+                const ingredientsUl = document.getElementById("ingredientsList");
+                ingredients.forEach((item, index) => {
+                    const li = document.createElement("li");
+                    li.textContent = item;
+                    ingredientsUl.appendChild(li);
+                });
+
+                const stepsOl = document.getElementById("stepsList");
+                steps.forEach((item, index) => {
+                    const li = document.createElement("li");
+                    li.textContent = item;
+                    stepsOl.appendChild(li);
+                });
+
+                document.getElementById("recipeTip").textContent = tip;
+            }
+
+            document
+                .getElementById("ingredientsInput")
+                .addEventListener("keydown", function (e) {
+                    if (e.key === "Enter") {
+                        generateRecipe();
+                    }
+                });
+        </script>
+    </body>
+</html>

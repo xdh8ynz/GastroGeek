@@ -1,6 +1,6 @@
 import unittest
 
-from utility import preprocessing
+from core.utility import preprocessing
 
 
 class UtilityTestCase(unittest.TestCase):

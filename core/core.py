@@ -2,13 +2,12 @@ from functools import cache
 from pathlib import Path
 
 import openai
+from constants import *
 from openai import OpenAI
 from openai.types.chat import (
     ChatCompletionSystemMessageParam,
     ChatCompletionUserMessageParam,
 )
-
-from constants import *
 from utility import load_file, preprocessing
 
 parent_path = Path(__file__).resolve().parent
