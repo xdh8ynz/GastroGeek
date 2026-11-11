@@ -33,4 +33,4 @@ jobs:
         python -m ruff format --check .
     - name: Test with pytest
       run: |
-        pytest
+        python -m pytest tests/
